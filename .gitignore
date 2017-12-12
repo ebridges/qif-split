@@ -1,3 +1,7 @@
 
 *.egg-info/
 dist/
+*.gnucash
+*.log
+*.qif
+split-config.json
