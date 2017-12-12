@@ -21,14 +21,65 @@ from logging import info, debug, error
 from docopt import docopt
 import json
 from jsoncomment import JsonComment
+from qifparse.parser import QifParser
 
-def process_splits(config, qif_file):
+BUDGETED_CASH='Assets:Budgeted Cash'
+UNBUDGETED_CASH='Budget:Unbudgeted Cash'
+
+def process_qif_file(config, qif_file):
+  with open(qif_file) as q:
+    qif = QifParser.parse(q)
+    for a in qif.get_accounts():
+      for t in a.get_transactions():
+        for tt in t:
+          process_transaction(config, tt)
+    #print(str(qif))
+
+
+def process_transaction(cfg, txn):
+  splits = get_splits_for_transaction(cfg, txn)
+  if splits:
+    print("\nThis transaction has a split:")
+  else:
+    print("\nThis transaction does not have a split:")
+  print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
+
+
+def get_splits_for_transaction(cfg, txn):
+  key = 'category:%s' % txn.category
+  return cfg.get(key)
 
 
 def load_split_config(config):
   parser = JsonComment(json)
   with open(config) as fp:
-    return parser.load(fp)
+    cfg = parser.load(fp)
+    split_config = dict()
+    for entry in cfg:
+      key = '%s:%s' % (entry['match-on-field'], entry['match-on-text'])
+      split_config[key] = round_out_splits(entry['splits'])
+    return split_config
+
+
+## Appends a split to add any remainder < 100% to an
+## account for unbudgeted cash.  intended for budget
+## setup to ensure all income is assigned to a budget account
+def round_out_splits(splits):
+  global BUDGETED_CASH
+  global UNBUDGETED_CASH
+  pctg = 0
+  for split in splits:
+    if 'percentage' in split:
+      pctg = pctg + int(split['percentage'].replace('%', ''))
+  remainder=100-pctg
+  if(remainder > 0 and remainder < 100):
+    splits.append({
+      "credit-account": UNBUDGETED_CASH,
+      "debit-account": BUDGETED_CASH,
+      "percentage": "%d%%" % remainder
+    })
+  return splits
+
 
 def main():
   args = docopt(__doc__, version=__version__)
@@ -39,6 +90,6 @@ def main():
   qif_file = args['--qif-input']
 
   if qif_file:
-    process_splits(split_config, qif_file)
+    process_qif_file(split_config, qif_file)
   else:
     error('qif-input not specified.')
