@@ -81,6 +81,9 @@ def round_out_splits(splits):
   return splits
 
 
+def sign_of(value):
+  return -1 if value and value < 0 else 1
+
 def main():
   args = docopt(__doc__, version=__version__)
   configure_logging(args['--verbose'])
