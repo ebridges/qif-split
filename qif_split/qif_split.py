@@ -22,6 +22,7 @@ from docopt import docopt
 import json
 from jsoncomment import JsonComment
 from qifparse.parser import QifParser
+from qifparse.qif import AmountSplit
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 BUDGETED_CASH='Assets:Budgeted Cash'
@@ -47,6 +48,11 @@ def process_transaction_splits(splits):
   else:
     print("\nThis transaction does not have a split:")
   print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
+
+
+def add_split(amount, category, transaction):
+  split=AmountSplit(category=category, amount=amount)
+  transaction.splits.append(split)
 
 
 def get_splits_for_transaction(cfg, txn):

@@ -21,6 +21,16 @@ class TestQifSplit(TestCase):
     self.assertEqual(EXPECTED_RESULT, ACTUAL_RESULT)
 
 
+  def test_add_split(self):
+    category='foobar'
+    amount=Decimal(123.45)
+    txn = MockTxn(category, amount)
+    qif_split.add_split(amount, category, txn)
+    self.assertEqual(len(txn.splits), 1)
+    self.assertEqual(txn.splits[0].category, category)
+    self.assertEqual(txn.splits[0].amount, amount)
+
+
   def test_load_split_config(self):
     EG_CONFIG_FILE='eg/split-config.json'
     config = qif_split.load_split_config(EG_CONFIG_FILE)
