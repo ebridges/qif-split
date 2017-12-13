@@ -22,9 +22,12 @@ from docopt import docopt
 import json
 from jsoncomment import JsonComment
 from qifparse.parser import QifParser
+from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 BUDGETED_CASH='Assets:Budgeted Cash'
 UNBUDGETED_CASH='Budget:Unbudgeted Cash'
+
+ONE_HUNDRED = Decimal('100.0000')
 
 def process_qif_file(config, qif_file):
   with open(qif_file) as q:
@@ -79,6 +82,16 @@ def round_out_splits(splits):
       "percentage": "%d%%" % remainder
     })
   return splits
+
+
+def percentage_of(amount, pctg):
+  getcontext().rounding = ROUND_HALF_UP
+  c = getcontext()
+
+  dividend = Decimal(pctg.replace('%', ''))
+  percentage = c.divide(dividend, ONE_HUNDRED)
+  product = c.multiply(amount, percentage)
+  return product.quantize(Decimal('0.01'))
 
 
 def sign_of(value):
