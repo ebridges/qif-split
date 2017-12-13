@@ -42,11 +42,17 @@ def process_qif_file(config, qif_file):
     #print(str(qif))
 
 
-def process_transaction_splits(splits):
-  if splits:
-    print("\nThis transaction has a split:")
-  else:
-    print("\nThis transaction does not have a split:")
+def process_transaction_splits(split_configs, txn):
+  for split_config in split_configs:
+    amount = amount_for_transaction(txn, split_config)
+
+    sign=sign_of(split_config['credit-sign'])
+    add_split(amount*sign, split_config['credit-account'], txn)
+
+    sign=sign_of(split_config['debit-sign'])
+    add_split(amount*sign, split_config['debit-account'], txn)
+
+
   print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
 
 
