@@ -3,6 +3,9 @@ from unittest import TestCase, main
 from qif_split import qif_split
 from decimal import Decimal
 
+EG_CONFIG_FILE='eg/example-split-config.json'
+
+
 class MockTxn():
   def __init__(self, category='mock-category', amount=Decimal('0'), splits=[]):
     self.category=category
@@ -45,7 +48,7 @@ class TestQifSplit(TestCase):
 
 
   def test_load_split_config(self):
-    EG_CONFIG_FILE='eg/split-config.json'
+    global EG_CONFIG_FILE
     config = qif_split.load_split_config(EG_CONFIG_FILE)
     self.assertTrue('category:Expenses:Food & Dining:Groceries' in config)
     splits = config['category:Expenses:Food & Dining:Groceries']

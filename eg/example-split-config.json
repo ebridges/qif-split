@@ -1,0 +1,12 @@
+[
+  {
+    "match-on-field": "category",
+    "match-on-text": "Expenses:Food & Dining:Groceries",
+    "splits": [
+      {
+        "credit-account": "Assets:Budgeted Cash",
+        "debit-account": "Budget:Expenses:Food & Dining:Groceries"
+      }
+    ]
+  }
+]
