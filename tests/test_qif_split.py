@@ -3,16 +3,20 @@ from unittest import TestCase, main
 from qif_split import qif_split
 from decimal import Decimal
 
+class MockTxn():
+  def __init__(self, category, amount=Decimal('0'), splits=[]):
+    self.category=category
+    self.amount=amount
+    self.splits=splits
+
+
 class TestQifSplit(TestCase):
   def test_get_splits_for_transaction(self):
     CATEGORY_NAME='foobar'
     EXPECTED_RESULT='barfoo'
     config = dict()
     config['category:%s' % CATEGORY_NAME] = EXPECTED_RESULT
-    class MockTxn():
-      def __init__(self):
-        self.category=CATEGORY_NAME
-    txn = MockTxn()
+    txn = MockTxn(CATEGORY_NAME)
     ACTUAL_RESULT = qif_split.get_splits_for_transaction(config, txn)
     self.assertEqual(EXPECTED_RESULT, ACTUAL_RESULT)
 
