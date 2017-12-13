@@ -4,7 +4,7 @@ from qif_split import qif_split
 from decimal import Decimal
 
 class MockTxn():
-  def __init__(self, category, amount=Decimal('0'), splits=[]):
+  def __init__(self, category='mock-category', amount=Decimal('0'), splits=[]):
     self.category=category
     self.amount=amount
     self.splits=splits
@@ -29,6 +29,19 @@ class TestQifSplit(TestCase):
     self.assertEqual(len(txn.splits), 1)
     self.assertEqual(txn.splits[0].category, category)
     self.assertEqual(txn.splits[0].amount, amount)
+
+
+  def test_amount_for_transaction(self):
+    txn = MockTxn(amount=Decimal("1.00"))
+    
+    cfg_pct = {'percentage': '25%'}
+    amount = qif_split.amount_for_transaction(txn, cfg_pct)
+    self.assertEqual(amount, Decimal("0.25"))
+
+    cfg_nil = {}
+    amount = qif_split.amount_for_transaction(txn, cfg_nil)
+    self.assertEqual(amount, Decimal("1.00"))
+
 
 
   def test_load_split_config(self):

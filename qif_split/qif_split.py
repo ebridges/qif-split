@@ -50,6 +50,13 @@ def process_transaction_splits(splits):
   print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
 
 
+def amount_for_transaction(txn, cfg):
+  if 'percentage' in cfg:
+    return percentage_of(txn.amount, cfg['percentage'])
+  else:
+    return txn.amount
+
+
 def add_split(amount, category, transaction):
   split=AmountSplit(category=category, amount=amount)
   transaction.splits.append(split)
