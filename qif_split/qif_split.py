@@ -32,12 +32,12 @@ def process_qif_file(config, qif_file):
     for a in qif.get_accounts():
       for t in a.get_transactions():
         for tt in t:
-          process_transaction(config, tt)
+          splits = get_splits_for_transaction(config, tt)
+          process_transaction_splits(splits)
     #print(str(qif))
 
 
-def process_transaction(cfg, txn):
-  splits = get_splits_for_transaction(cfg, txn)
+def process_transaction_splits(splits):
   if splits:
     print("\nThis transaction has a split:")
   else:
