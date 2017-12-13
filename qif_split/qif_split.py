@@ -36,7 +36,8 @@ def process_qif_file(config, qif_file):
       for t in a.get_transactions():
         for tt in t:
           splits = get_splits_for_transaction(config, tt)
-          process_transaction_splits(splits)
+          if splits:
+            process_transaction_splits(splits)
     #print(str(qif))
 
 
