@@ -53,7 +53,7 @@ def process_transaction_splits(split_configs, txn):
 
     sign=sign_of(split_config.get('debit-sign'))
     add_split(amount*sign, split_config.get('debit-account'), txn)
-  print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
+  debug('%s - %s: %s' % (txn.date, txn.category, txn.amount))
 
 
 def amount_for_transaction(txn, cfg):
