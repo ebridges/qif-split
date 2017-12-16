@@ -25,8 +25,9 @@ from qifparse.parser import QifParser
 from qifparse.qif import AmountSplit
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 
+
 BUDGETED_CASH='Assets:Budgeted Cash'
-UNBUDGETED_CASH='Budget:Unbudgeted Cash'
+UNBUDGETED_CASH='Budgets:Unbudgeted Cash'
 
 ONE_HUNDRED = Decimal('100.0000')
 
