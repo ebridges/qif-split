@@ -107,6 +107,7 @@ def round_out_splits(splits):
 
 
 def percentage_of(amount, pctg):
+  global ONE_HUNDRED
   getcontext().rounding = ROUND_HALF_UP
   c = getcontext()
 
