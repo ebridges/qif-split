@@ -48,13 +48,11 @@ def process_transaction_splits(split_configs, txn):
   for split_config in split_configs:
     amount = amount_for_transaction(txn, split_config)
 
-    sign=sign_of(split_config['credit-sign'])
-    add_split(amount*sign, split_config['credit-account'], txn)
+    sign=sign_of(split_config.get('credit-sign'))
+    add_split(amount*sign, split_config.get('credit-account'), txn)
 
-    sign=sign_of(split_config['debit-sign'])
-    add_split(amount*sign, split_config['debit-account'], txn)
-
-
+    sign=sign_of(split_config.get('debit-sign'))
+    add_split(amount*sign, split_config.get('debit-account'), txn)
   print('%s - %s: %s' % (txn.date, txn.category, txn.amount))
 
 
@@ -66,8 +64,9 @@ def amount_for_transaction(txn, cfg):
 
 
 def add_split(amount, category, transaction):
-  split=AmountSplit(category=category, amount=amount)
-  transaction.splits.append(split)
+  if category:
+    split=AmountSplit(category=category, amount=amount)
+    transaction.splits.append(split)
 
 
 def get_splits_for_transaction(cfg, txn):
