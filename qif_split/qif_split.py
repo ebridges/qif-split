@@ -31,6 +31,7 @@ UNBUDGETED_CASH='Budgets:Unbudgeted Cash'
 
 ONE_HUNDRED = Decimal('100.0000')
 
+
 def process_qif_file(config, qif_file):
   with open(qif_file) as q:
     qif = QifParser.parse(q)
