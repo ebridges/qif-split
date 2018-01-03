@@ -54,10 +54,9 @@ def process_transaction_splits(split_configs, txn):
     sign=sign_of(split_config.get('debit-sign'))
     add_split(amount*sign, split_config.get('debit-account'), txn)
 
-    # replace the original category of the transaction with its own split
+    # add a split for original category of the transaction
     add_split(txn.amount, txn.category, txn)
-    txn.category = None
-    txn.amount = 0
+
   debug('%s - %s: %s' % (txn.date, txn.category, txn.amount))
 
 
