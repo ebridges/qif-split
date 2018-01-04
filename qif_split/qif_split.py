@@ -26,9 +26,6 @@ from qifparse.qif import AmountSplit
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 
-BUDGETED_CASH='Assets:Budgeted Cash'
-UNBUDGETED_CASH='Budgets:Unbudgeted Cash'
-
 ONE_HUNDRED = Decimal('100.0000')
 
 
@@ -85,28 +82,8 @@ def load_split_config(config):
     split_config = dict()
     for entry in cfg:
       key = '%s:%s' % (entry['match-on-field'], entry['match-on-text'])
-      split_config[key] = round_out_splits(entry['splits'])
+      split_config[key] = entry['splits']
     return split_config
-
-
-## Appends a split to add any remainder < 100% to an
-## account for unbudgeted cash.  intended for budget
-## setup to ensure all income is assigned to a budget account
-def round_out_splits(splits):
-  global BUDGETED_CASH
-  global UNBUDGETED_CASH
-  pctg = 0
-  for split in splits:
-    if 'percentage' in split:
-      pctg = pctg + int(split['percentage'].replace('%', ''))
-  remainder=100-pctg
-  if(remainder > 0 and remainder < 100):
-    splits.append({
-      "credit-account": UNBUDGETED_CASH,
-      "debit-account": BUDGETED_CASH,
-      "percentage": "%d%%" % remainder
-    })
-  return splits
 
 
 def percentage_of(amount, pctg):
