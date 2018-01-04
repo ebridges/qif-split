@@ -1,9 +1,12 @@
+"""
+Unit tests for QIF Split
+"""
 
+from decimal import Decimal
 from unittest import TestCase, main
 from qif_split import qif_split
-from decimal import Decimal
 
-EG_CONFIG_FILE='eg/example-split-config.json'
+EG_CONFIG_FILE = 'eg/example-split-config.json'
 
 
 class MockTxn():
@@ -15,8 +18,8 @@ class MockTxn():
 
 class TestQifSplit(TestCase):
   def test_get_splits_for_transaction(self):
-    CATEGORY_NAME='foobar'
-    EXPECTED_RESULT='barfoo'
+    CATEGORY_NAME = 'foobar'
+    EXPECTED_RESULT = 'barfoo'
     config = dict()
     config['category:%s' % CATEGORY_NAME] = EXPECTED_RESULT
     txn = MockTxn(CATEGORY_NAME)
@@ -44,7 +47,6 @@ class TestQifSplit(TestCase):
     cfg_nil = {}
     amount = qif_split.amount_for_transaction(txn, cfg_nil)
     self.assertEqual(amount, Decimal("1.00"))
-
 
 
   def test_load_split_config(self):
