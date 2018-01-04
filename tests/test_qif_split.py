@@ -38,14 +38,14 @@ class TestQifSplit(TestCase):
 
 
   def test_amount_for_transaction(self):
-    txn = MockTxn(amount=Decimal("1.00"))
+    txn_amt = Decimal("1.00")
     
     cfg_pct = {'percentage': '25%'}
-    amount = qif_split.amount_for_transaction(txn, cfg_pct)
+    amount = qif_split.amount_for_transaction(txn_amt, cfg_pct)
     self.assertEqual(amount, Decimal("0.25"))
 
     cfg_nil = {}
-    amount = qif_split.amount_for_transaction(txn, cfg_nil)
+    amount = qif_split.amount_for_transaction(txn_amt, cfg_nil)
     self.assertEqual(amount, Decimal("1.00"))
 
 
