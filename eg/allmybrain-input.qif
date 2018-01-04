@@ -1,0 +1,19 @@
+!Account
+NAssets:Current Assets:Checking Account
+TBank
+^
+!Type:Bank
+C
+D12/15/2008
+NN/A
+PSample Income
+T100.00
+LIncome
+^
+C
+D12/16/2008
+NN/A
+PGrocery Shopping
+T-37.50
+LExpenses:Food
+^

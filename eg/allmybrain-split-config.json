@@ -1,0 +1,25 @@
+[
+  {    
+    "match-on-field": "category",
+    "match-on-text": "Income",
+    "splits": [
+      {
+        "credit-account": "Budget:Food",
+        "debit-account": "Assets:Budgeted Cash",
+        "percentage": "50%",
+        "debit-sign": -1
+      }
+    ]
+  },
+  {
+    "match-on-field": "category",
+    "match-on-text": "Expenses:Food",
+    "splits": [
+      {
+        "credit-account": "Assets:Budgeted Cash",
+        "debit-account": "Budget:Food",
+        "credit-sign": -1
+      }
+    ]
+  }
+]
