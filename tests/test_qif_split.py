@@ -55,20 +55,6 @@ class TestQifSplit(TestCase):
     self.assertEqual(splits[0]['credit-account'], 'Assets:Budgeted Cash')
 
 
-  def test_round_out_splits(self):
-    EG_SPLITS = [
-      {
-        "credit-account": "Assets:Budgeted Cash",
-        "debit-account": "Budget:Expenses:Food & Dining:Groceries",
-        "percentage": "75%"
-      }
-    ]
-    actual_splits = qif_split.round_out_splits(EG_SPLITS)
-
-    self.assertEqual(len(actual_splits), 2)
-    self.assertEqual(actual_splits[1]['percentage'], "25%")
-
-
   def test_percentage_of(self):
     actual_value = qif_split.percentage_of(300, '33.3333%')
     self.assertEqual(Decimal(100), actual_value)
