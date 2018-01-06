@@ -4,6 +4,14 @@
 
 Splits transactions in a QIF file to support budgeting and more granular financial tracking.
 
+## Installation
+
+```
+$ mkvirtualenv --python=python3 qif-split # optional
+$ pip install --requirement requirements.txt
+$ python setup.py test install
+```
+
 ## Usage
 
 ```
