@@ -54,20 +54,33 @@ def process_transaction_splits(split_configs, txn):
   add splits to the transaction per the configuration.
   """
   info('processing splits for transaction [%s]...' % txn.category)
+  account_tally = dict()
   for split_config in split_configs:
     amount = amount_for_transaction(txn.amount, split_config)
 
     sign = sign_of(split_config.get('credit-sign'))
-    add_split(amount*sign, split_config.get('credit-account'), txn)
+    incr_account_by(account_tally, split_config.get('credit-account'), amount*sign)
 
     sign = sign_of(split_config.get('debit-sign'))
-    add_split(amount*sign, split_config.get('debit-account'), txn)
+    incr_account_by(account_tally, split_config.get('debit-account'), amount*sign)
 
-    # add a split for original category of the transaction
-    add_split(txn.amount, txn.category, txn)
+  # add a split for original category of the transaction
+  incr_account_by(account_tally, txn.category, txn.amount)
+
+  for account in account_tally.keys():
+    add_split(account_tally[account], account, txn)
 
   debug('%s - %s: %s' % (txn.date, txn.category, txn.amount))
   info('...completed.')
+
+
+def incr_account_by(tally, account, amount):
+  """
+  Updates a given account by an amount and stored in the given tally.
+  """
+  if account not in tally:
+    tally[account] = Decimal(0)
+  tally[account] = tally[account] + amount
 
 
 def amount_for_transaction(amount, cfg):
