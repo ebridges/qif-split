@@ -19,13 +19,14 @@ $ qif-split --help
 QIF Split
 
 Usage:
-  qif-split split --qif-input=<PATH> [--split-cfg=<PATH>] [--verbose]
+  qif-split split --qif-input=<PATH> [--split-cfg=<PATH>] [--asof=<DATE>] [--verbose]
   qif-split -h | --help
   qif-split --version
 
 Options:
   --qif-input=<PATH>   Input QIF file.
   --split-cfg=<PATH>   Input configuration of splits [Default: ./split-config.json]
+  --asof=<DATE>        Only process splits for transactions on or after this date (e.g.: %Y-%m-%d).
   -h --help            Show this screen.
   --version            Show version.
   --verbose            Debug-level output.

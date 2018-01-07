@@ -2,6 +2,7 @@
 Unit tests for QIF Split
 """
 
+from datetime import datetime
 from decimal import Decimal
 from unittest import TestCase, main
 from qif_split import qif_split
@@ -10,10 +11,11 @@ EG_CONFIG_FILE = 'eg/example-split-config.json'
 
 
 class MockTxn():
-  def __init__(self, category='mock-category', amount=Decimal('0'), splits=[]):
+  def __init__(self, category='mock-category', amount=Decimal('0'), splits=[], date=datetime.today()):
     self.category=category
     self.amount=amount
     self.splits=splits
+    self.date = date
 
 
 class TestQifSplit(TestCase):
@@ -70,6 +72,31 @@ class TestQifSplit(TestCase):
     self.assertEqual(qif_split.sign_of(None), 1)
     self.assertEqual(qif_split.sign_of(-10), -1)
     self.assertEqual(qif_split.sign_of(+10), +1)
+
+
+  def test_transaction_filter(self):
+    """
+    test of the `transaction_filter` function.
+    """
+    new_years = datetime(2017, 1, 1)
+    txn_filter = {'asof': new_years.date()}
+    empty_txn_filter = {}
+
+    after_new_years = datetime(2017, 6, 6)
+    txn = MockTxn(date=after_new_years)
+    self.assertTrue(qif_split.transaction_filter(txn, txn_filter))
+
+    on_new_years = datetime(2017, 1, 1)
+    txn = MockTxn(date=on_new_years)
+    self.assertTrue(qif_split.transaction_filter(txn, txn_filter))
+
+    before_new_years = datetime(2016, 12, 31)
+    txn = MockTxn(date=before_new_years)
+    self.assertFalse(qif_split.transaction_filter(txn, txn_filter))
+
+    today = datetime.today()
+    txn = MockTxn(date=today)
+    self.assertTrue(qif_split.transaction_filter(txn, empty_txn_filter))
 
 
 if __name__ == '__main__':

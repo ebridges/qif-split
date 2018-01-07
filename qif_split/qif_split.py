@@ -2,13 +2,14 @@
 QIF Split
 
 Usage:
-  qif-split split --qif-input=<PATH> [--split-cfg=<PATH>] [--verbose]
+  qif-split split --qif-input=<PATH> [--split-cfg=<PATH>] [--asof=<DATE>] [--verbose]
   qif-split -h | --help
   qif-split --version
 
 Options:
   --qif-input=<PATH>   Input QIF file.
   --split-cfg=<PATH>   Input configuration of splits [Default: ./split-config.json]
+  --asof=<DATE>        Only process splits for transactions on or after this date (e.g.: %Y-%m-%d).
   -h --help            Show this screen.
   --version            Show version.
   --verbose            Debug-level output.
@@ -18,6 +19,7 @@ Options:
 import json
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 from logging import info, debug, error
+from datetime import datetime
 from docopt import docopt
 from jsoncomment import JsonComment
 from qifparse.parser import QifParser
@@ -27,7 +29,7 @@ from .util import configure_logging
 from .version import __version__
 
 
-def process_qif_file(config, qif_file):
+def process_qif_file(config, qif_file, txn_filter):
   """
   Given a QIF file and configuration for splitting transactions,
   loop through all of the transactions and split them up based
@@ -36,16 +38,28 @@ def process_qif_file(config, qif_file):
   Args:
     config (dictionary): Split configuration.
     qif_file (string): Path to a QIF file.
+    txn_filter (dictionary): A collection of rules for filtering transactions.
   """
   with open(qif_file) as q:
     qif = QifParser.parse(q)
     for account in qif.get_accounts():
       for transactions in account.get_transactions():
         for transaction in transactions:
-          splits = get_splits_for_transaction(config, transaction)
-          if splits:
-            process_transaction_splits(splits, transaction)
+          if transaction_filter(transaction, txn_filter):
+            splits = get_splits_for_transaction(config, transaction)
+            if splits:
+              process_transaction_splits(splits, transaction)
     print(str(qif))
+
+
+def transaction_filter(transaction, txn_filter):
+  """
+  Using the given dictionary of transaction-filtering rules,
+  decide whether any of them apply to the given transaction.
+  """
+  if 'asof' in txn_filter and transaction.date.date() < txn_filter['asof']:
+    return False
+  return True
 
 
 def process_transaction_splits(split_configs, txn):
@@ -160,8 +174,16 @@ def main():
   qif_file = args['--qif-input']
   info('processing QIF file: [%s]' % qif_file)
 
+  asof = args['--asof']
+  if asof:
+    asof_date = datetime.strptime(asof, '%Y-%m-%d').date()
+    info('filtering transactions as of %s' % asof_date)
+    txn_filter = {'asof': asof_date}
+  else:
+    txn_filter = {}
+
   if qif_file:
-    process_qif_file(split_config, qif_file)
+    process_qif_file(split_config, qif_file, txn_filter)
   else:
     error('qif-input not specified.')
 
