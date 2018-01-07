@@ -67,8 +67,8 @@ def process_transaction_splits(split_configs, txn):
   # add a split for original category of the transaction
   incr_account_by(account_tally, txn.category, txn.amount)
 
-  for account in account_tally.keys():
-    add_split(account_tally[account], account, txn)
+  for account, amount in account_tally.items():
+    add_split(amount, account, txn)
 
   debug('%s - %s: %s' % (txn.date, txn.category, txn.amount))
   info('...completed.')
